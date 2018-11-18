@@ -4,7 +4,7 @@ public class BreadthFirstSearch  extends ASearch
 {
 	// Define lists here ...
     private Queue<ASearchNode> m_openList;
-    private HashSet<ASearchNode> m_opedAid;
+    private HashMap<ASearchNode, ASearchNode> m_opedAid;
     private AbstractSet<ASearchNode> m_closedList;
 
 	
@@ -28,7 +28,7 @@ public class BreadthFirstSearch  extends ASearch
 	public void initLists() 
 	{
         m_openList = new LinkedList<>();
-        m_opedAid = new HashSet<>();
+        m_opedAid = new HashMap<>();
         m_closedList = new HashSet<>();
 	}
 
@@ -38,12 +38,12 @@ public class BreadthFirstSearch  extends ASearch
 		ASearchNode node
 	) 
 	{
-	    ASearchNode toReturn = null;
+	    /* ASearchNode toReturn = null;
         if (isOpen(node)) {
-            m_opedAid.remove(node);
-            toReturn = getNode(getIdx(node));
-        }
-		return toReturn;
+            toReturn = m_opedAid.get(node);
+ //           toReturn = getNode(getIdx(node));
+        }*/
+		return m_opedAid.get(node);
 	}
 
 	@Override
@@ -52,7 +52,7 @@ public class BreadthFirstSearch  extends ASearch
 		ASearchNode node
 	) 
 	{
-		return m_opedAid.contains(node);
+		return m_opedAid.containsKey(node);
 	}
 	
 	@Override
@@ -70,8 +70,16 @@ public class BreadthFirstSearch  extends ASearch
 		ASearchNode node
 	) 
 	{
-		m_openList.add(node);
-		m_opedAid.add(node);
+		if (!m_opedAid.containsKey(node)){
+			m_openList.add(node);
+			m_opedAid.put(node, node);
+		}
+		else{
+			m_opedAid.remove(node);
+			m_opedAid.put(node, node);
+			m_openList.remove(node);
+			m_openList.add(node);
+		}
 	}
 
 	@Override
