@@ -1,7 +1,12 @@
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.PriorityQueue;
 
 public class AStarSearch   extends ASearch
 {
 	// Define lists here ...
+	private PriorityQueue<ASearchNode> m_openList;
+	private ArrayList<ASearchNode> m_closeList;
 	
 	@Override
 	public String getSolverName() 
@@ -22,7 +27,17 @@ public class AStarSearch   extends ASearch
 	@Override
 	public void initLists() 
 	{
-		
+		m_openList = new PriorityQueue<>(new Comparator<ASearchNode>() {
+			@Override
+			public int compare(ASearchNode o1, ASearchNode o2) {
+				if (o1.getF() > o2.getF())
+					return 1;
+				else if (o1.getF() < o2.getF())
+					return -1;
+				return 0;
+			}
+		});
+		m_closeList = new ArrayList<>();
 	}
 
 	@Override
@@ -31,6 +46,10 @@ public class AStarSearch   extends ASearch
 		ASearchNode node
 	) 
 	{
+		for (ASearchNode aM_openList : m_openList) {
+			if (aM_openList.equals(node))
+				return aM_openList;
+		}
 		return null;
 	}
 
@@ -40,7 +59,7 @@ public class AStarSearch   extends ASearch
 		ASearchNode node
 	) 
 	{
-		return false;
+		return m_openList.contains(node);
 	}
 	
 	@Override
@@ -49,7 +68,7 @@ public class AStarSearch   extends ASearch
 		ASearchNode node
 	) 
 	{
-		return false;
+		return m_closeList.contains(node);
 	}
 
 	@Override
@@ -58,7 +77,8 @@ public class AStarSearch   extends ASearch
 		ASearchNode node
 	) 
 	{
-
+		//m_openList.remove(node);
+		m_openList.add(node);
 	}
 
 	@Override
@@ -67,19 +87,19 @@ public class AStarSearch   extends ASearch
 		ASearchNode node
 	) 
 	{
-		
+		m_closeList.add(node);
 	}
 
 	@Override
 	public int openSize() 
 	{
-		return 0;
+		return m_openList.size();
 	}
 
 	@Override
 	public ASearchNode getBest() 
 	{
-		return null;
+		return m_openList.poll();
 	}
 
 }
