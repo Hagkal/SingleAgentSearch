@@ -1,7 +1,10 @@
+import java.util.*;
 
 public class UniformCostSearch   extends ASearch
 {
 	// Define lists here ...
+	private PriorityQueue<ASearchNode> m_openList;
+	private ArrayList<ASearchNode> m_closedList;
 	
 	@Override
 	public String getSolverName() 
@@ -22,7 +25,13 @@ public class UniformCostSearch   extends ASearch
 	@Override
 	public void initLists() 
 	{
-
+		m_closedList = new ArrayList<>();
+		m_openList = new PriorityQueue<>(new Comparator<ASearchNode>() {
+			@Override
+			public int compare(ASearchNode o1, ASearchNode o2) {
+				return (int)(o1.getF() - o2.getF());
+			}
+		});
 	}
 
 	@Override
@@ -31,6 +40,10 @@ public class UniformCostSearch   extends ASearch
 		ASearchNode node
 	) 
 	{
+		for (ASearchNode aM_openList : m_openList) {
+			if (aM_openList.equals(node))
+				return aM_openList;
+		}
 		return null;
 	}
 
@@ -40,7 +53,7 @@ public class UniformCostSearch   extends ASearch
 		ASearchNode node
 	) 
 	{
-		return false;
+		return m_openList.contains(node);
 	}
 	
 	@Override
@@ -49,16 +62,17 @@ public class UniformCostSearch   extends ASearch
 		ASearchNode node
 	) 
 	{
-		return false;
+		return m_closedList.contains(node);
 	}
 
 	@Override
 	public void addToOpen
 	(
 		ASearchNode node
-	) 
+	)
 	{
-
+		m_openList.remove(node);
+		m_openList.add(node);
 	}
 
 	@Override
@@ -67,19 +81,20 @@ public class UniformCostSearch   extends ASearch
 		ASearchNode node
 	) 
 	{
-
+		m_closedList.add(node);
 	}
 
 	@Override
 	public int openSize() 
 	{
-		return 0;
+		return m_openList.size();
 	}
 
 	@Override
 	public ASearchNode getBest() 
 	{
-		return null;
+
+		return m_openList.poll();
 	}
 
 }
